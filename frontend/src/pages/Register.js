@@ -24,8 +24,14 @@ function Register() {
     setTimeout(() => {
       window.location.href = "/";
     }, 1500);
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Registration failed");
+
+  } catch (error) {
+    console.log("REGISTER ERROR:", error);
+
+    const message =
+      error.response?.data?.message || "Registration failed";
+
+    toast.error(message);
   }
 };
 
