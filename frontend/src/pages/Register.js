@@ -14,7 +14,7 @@ function Register() {
     }
 
     try {
-      await axios.post("http://localhost:5004/register", {
+      await axios.post("https://expense-tracker-y6hk.onrender.com", {
         name,
         email,
         password,
