@@ -71,7 +71,6 @@ app.post("/register", async (req, res) => {
   }
 });
 
-
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -79,28 +78,26 @@ app.post("/login", async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ message: "User not found " });
+      return res.status(400).json({ message: "User not found" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
-if (!isMatch) {
-  return res.status(400).json({ message: "Invalid credentials " });
-}
-    
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
     const token = jwt.sign(
       { userId: user._id },
-      "secretkey",
+      process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
-    res.json({
-      message: "Login successful ",
-      token
-    });
+    res.json({ token });
 
   } catch (error) {
-    res.status(500).json({ message: "Error logging in " });
+    console.log("LOGIN ERROR:", error); // 🔥 DEBUG
+    res.status(500).json({ message: error.message }); // 🔥 SHOW ERROR
   }
 });
 
