@@ -8,27 +8,26 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleRegister = async () => {
-    if (!name || !email || !password) {
-      return toast.error("All fields required");
-    }
+ const handleRegister = async () => {
+  if (!email || !password) {
+    return toast.error("All fields required");
+  }
 
-    try {
-      await axios.post("https://expense-tracker-y6hk.onrender.com", {
-        name,
-        email,
-        password,
-      });
+  try {
+    await axios.post("https://expense-tracker-y6hk.onrender.com/register", {
+      email,
+      password,
+    });
 
-      toast.success("Registered successfully 🎉");
+    toast.success("Registered successfully");
 
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 1500);
-    } catch (err) {
-      toast.error("User already exists ❌");
-    }
-  };
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 1500);
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Registration failed");
+  }
+};
 
   return (
     <div
