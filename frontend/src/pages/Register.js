@@ -4,7 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Register() {
-  const [name, setName] = useState("");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -51,11 +51,7 @@ function Register() {
         <h2 className="text-center mb-4">Create Account 🚀</h2>
 
        
-        <input
-          className="form-control mb-3"
-          placeholder="Full Name"
-          onChange={(e) => setName(e.target.value)}
-        />
+       
 
       
         <input
