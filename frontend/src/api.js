@@ -1,10 +1,10 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://expense-tracker-y6hk.onrender.com"
+  baseURL: "https://expense-tracker-y6hk.onrender.com",
 });
 
-// 🔥 Attach token automatically to every request
+// 🔐 Attach token automatically
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
 
@@ -14,18 +14,5 @@ API.interceptors.request.use((req) => {
 
   return req;
 });
-
-// 🔥 Handle unauthorized globally (optional but powerful)
-API.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    if (err.response && err.response.status === 401) {
-      // Token invalid or expired
-      localStorage.removeItem("token");
-      window.location.href = "/";
-    }
-    return Promise.reject(err);
-  }
-);
 
 export default API;

@@ -1,48 +1,51 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import API from "../api";
 import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  // 🔥 Auto redirect if already logged in
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      window.location.href = "/dashboard";
+
+ const handleLogin = async () => {
+  if (!email || !password) {
+    return toast.error("Please fill all fields");
+  }
+
+  try {
+    const res = await API.post("/login", {
+      email,
+      password,
+    });
+
+    console.log("LOGIN RESPONSE:", res.data);
+
+    // ❗ IMPORTANT: CHECK TOKEN EXISTS
+    if (!res.data.token) {
+      return toast.error("Token not received ❌");
     }
-  }, []);
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      return toast.error("Please fill all fields ❌");
-    }
+    // 🔥 SAVE TOKEN
+    localStorage.setItem("token", res.data.token);
 
-    try {
-      const res = await API.post("/login", {
-        email,
-        password,
-      });
+    // 🔥 VERIFY SAVE
+    console.log("TOKEN SAVED:", localStorage.getItem("token"));
 
-      // 🔥 Save token
-      localStorage.setItem("token", res.data.token);
+    toast.success("Login successful");
 
-      toast.success("Login successful 🚀");
+    // 🔥 DELAY REDIRECT
+    setTimeout(() => {
+       navigate("/dashboard");
+    }, 1000);
 
-      // 🔥 Redirect
-      setTimeout(() => {
-        window.location.href = "/dashboard";
-      }, 1200);
-
-    } catch (err) {
-      const message =
-        err.response?.data?.message || "Login failed ❌";
-
-      toast.error(message);
-    }
-  };
+  } catch (err) {
+    console.log(err);
+    toast.error(err.response?.data?.message || "Login failed");
+  }
+};
 
   return (
     <div

@@ -100,7 +100,10 @@ app.post("/login", async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    res.json({ token });
+   res.json({
+  message: "Login successful",
+  token: token
+});
 
   } catch (error) {
     console.log("LOGIN ERROR:", error); // 🔥 DEBUG

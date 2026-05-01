@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../api";
 
 function Dashboard() {
@@ -6,7 +7,18 @@ function Dashboard() {
   const [category, setCategory] = useState("");
   const [transactions, setTransactions] = useState([]);
 
-  // 🔥 Fetch data
+  const navigate = useNavigate(); // ✅ FIX
+
+  // // 🔐 Check auth
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+
+  //   if (!token) {
+  //     navigate("/"); // ✅ FIX
+  //   }
+  // }, [navigate]);
+
+  // 📥 Fetch data
   const fetchTransactions = async () => {
     try {
       const res = await API.get("/expenses");
@@ -48,21 +60,22 @@ function Dashboard() {
     }
   };
 
-  // 📊 Calculations
-  const totalIncome = transactions
-    .filter((t) => Number(t.amount) > 0)
-    .reduce((acc, t) => acc + Number(t.amount), 0);
+    // 📊 Calculations
+const totalIncome = transactions
+  .filter((t) => Number(t.amount) > 0)
+  .reduce((acc, t) => acc + Number(t.amount), 0);
 
-  const totalExpense = transactions
-    .filter((t) => Number(t.amount) < 0)
-    .reduce((acc, t) => acc + Math.abs(Number(t.amount)), 0);
+const totalExpense = transactions
+  .filter((t) => Number(t.amount) < 0)
+  .reduce((acc, t) => acc + Math.abs(Number(t.amount)), 0);
 
-  const balance = totalIncome - totalExpense;
+const balance = totalIncome - totalExpense;
+
 
   // 🔐 Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/";
+    navigate("/"); // ✅ FIX
   };
 
   // 🎨 Styles
@@ -90,8 +103,8 @@ function Dashboard() {
     color: "#fff",
     fontWeight: "bold",
     cursor: "pointer",
-    transition: "0.2s",
   };
+
 
   return (
     <div
@@ -102,7 +115,7 @@ function Dashboard() {
         color: "#fff",
       }}
     >
-      {/* 🔥 Header */}
+      {/* Header */}
       <div
         style={{
           display: "flex",
@@ -111,14 +124,13 @@ function Dashboard() {
           marginBottom: "30px",
         }}
       >
-        <h2 style={{ fontWeight: "bold" }}>💰 Expense Dashboard</h2>
-
+        <h2>💰 Expense Dashboard</h2>
         <button className="btn btn-danger" onClick={handleLogout}>
           Logout
         </button>
       </div>
 
-      {/* 🔥 Summary Cards */}
+      {/* Summary */}
       <div style={{ display: "flex", gap: "20px", marginBottom: "30px" }}>
         <div style={cardStyle("#3b82f6")}>
           <h6>Total Balance</h6>
@@ -136,7 +148,7 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* ➕ Add Transaction */}
+      {/* Add */}
       <div style={{ display: "flex", gap: "20px", marginBottom: "30px" }}>
         <input
           placeholder="Amount (+income / -expense)"
@@ -152,63 +164,49 @@ function Dashboard() {
           style={inputStyle}
         />
 
-        <button
-          onClick={addTransaction}
-          style={addBtn}
-          onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
-          onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
-        >
+        <button onClick={addTransaction} style={addBtn}>
           Add
         </button>
       </div>
 
-      {/* 📄 Transactions */}
-      <h4 style={{ marginBottom: "15px" }}>Recent Transactions</h4>
+      {/* Transactions */}
+      <h4>Recent Transactions</h4>
 
       {transactions.length === 0 && (
         <p style={{ color: "#aaa" }}>Start tracking your expenses 💸</p>
       )}
 
-      {transactions
-        .sort(
-          (a, b) =>
-            new Date(b.createdAt || Date.now()) -
-            new Date(a.createdAt || Date.now())
-        )
-        .map((t) => (
-          <div
-            key={t._id}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "15px",
-              marginBottom: "10px",
-              background: "#1e293b",
-              borderRadius: "10px",
-              borderLeft:
-                Number(t.amount) > 0
-                  ? "5px solid #22c55e"
-                  : "5px solid #ef4444",
-            }}
-          >
-            <div>
-              <strong>₹{Number(t.amount)}</strong>
-              <div style={{ fontSize: "13px", color: "#aaa" }}>
-                {String(t.title || "No category")}
-              </div>
-              <div style={{ fontSize: "11px", color: "#666" }}>
-                {new Date(t.createdAt || Date.now()).toLocaleDateString()}
-              </div>
+      {transactions.map((t) => (
+        <div
+          key={t._id}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "15px",
+            marginBottom: "10px",
+            background: "#1e293b",
+            borderRadius: "10px",
+            borderLeft:
+              Number(t.amount) > 0
+                ? "5px solid #22c55e"
+                : "5px solid #ef4444",
+          }}
+        >
+          <div>
+            <strong>₹{Number(t.amount)}</strong>
+            <div style={{ fontSize: "13px", color: "#aaa" }}>
+              {t.title}
             </div>
-
-            <button
-              className="btn btn-sm btn-danger"
-              onClick={() => deleteTransaction(t._id)}
-            >
-              Delete
-            </button>
           </div>
-        ))}
+
+          <button
+            className="btn btn-sm btn-danger"
+            onClick={() => deleteTransaction(t._id)}
+          >
+            Delete
+          </button>
+        </div>
+      ))}
     </div>
   );
 }
