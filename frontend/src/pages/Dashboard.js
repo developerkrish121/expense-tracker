@@ -37,10 +37,20 @@ function Dashboard() {
     if (!amount || !category) return;
 
     try {
-      await API.post("/add-expense", {
-        title: category,
-        amount: Number(amount),
-      });
+      const token = localStorage.getItem("token");
+
+await API.post(
+  "/add-expense",
+  {
+    title: category,
+    amount: Number(amount),
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
       setAmount("");
       setCategory("");
