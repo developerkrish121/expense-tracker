@@ -163,6 +163,8 @@ app.put("/update-expense/:id", auth, async (req, res) => {
 });
 
 
-app.listen(5004, () => {
-  console.log("Server running on port 5004 ");
+const PORT = process.env.PORT || 5004;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
