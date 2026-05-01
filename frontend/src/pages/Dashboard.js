@@ -92,7 +92,7 @@ function Dashboard() {
           color: theme.text,
         }}
       >
-        <h3>💰 Tracker</h3>
+        <h3>Expense Tracker</h3>
 
         <button
           onClick={() => setDark(!dark)}
